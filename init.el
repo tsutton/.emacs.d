@@ -29,8 +29,11 @@
 ;; custom package-selected-packages variable
 
 ;; Necessary for stuff e.g. calling rg or jq from elisp.
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text editting (search, navigation, completion)
@@ -266,7 +269,12 @@
 (use-package lsp-mode
   :defer t
   :ensure t
-  :commands lsp
+  :commands (lsp
+	     lsp-deferred
+	     lsp-format-buffer
+	     lsp-organize-imports
+	     lsp-register-custom-settings
+	     )
   :hook (
 	 (lsp-mode . lsp-enable-which-key-integration)
 	 (lsp-mode . enable-on-save-lsp-format)
@@ -396,6 +404,24 @@
 ;; to rustic-mode to enable LSP.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Go config
+
+(use-package go-mode
+  :ensure t
+  :config
+  (setq gofmt-command "goimports")
+  ;; Do I need to configure company?
+  ;; what's go-projectile?
+  (add-hook 'go-mode-hook 'lsp-deferred)
+  (defun lsp-go-install-save-hooks ()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (lsp-register-custom-settings
+   '(("gopls.staticcheck" t t)))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 (require 'org)
 (require 'org-agenda)
@@ -507,12 +533,12 @@
  '(confirm-kill-emacs 'y-or-n-p)
  '(delete-active-region nil)
  '(inhibit-startup-screen t)
+ '(menu-bar-mode nil)
  '(package-selected-packages
    '(ace-window magit lsp-mode diff-hl exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
- '(menu-bar-mode nil)
  '(scroll-preserve-screen-position t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
