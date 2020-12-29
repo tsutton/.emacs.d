@@ -61,8 +61,10 @@
 ;; Just enabling ivy already sets ivy as the completion function for e.g. find-file
 ;; According to the docs, the counsel versions of these functions don't just use ivy,
 ;; they have extra features built in as well.
-;; TODO like what?
-;; TODO I thought counsel (or maybe in combinatoin with savehist) would order M-x
+;; Namely, they provide extra actions that can be taken, for example, when in
+;; counsel-find-file, M-o j will open the file in the other window (or it can be
+;; inserted, etc...)
+;; TODO I thought counsel (or maybe in combination with savehist) would order M-x
 ;;      resuts by recent, but it doesn't seem to do that.
 (use-package counsel
   :ensure t
@@ -225,6 +227,10 @@
 ;; are all relatively marginal
 (use-package crux
   :ensure t
+  :commands (crux-kill-line-backwards
+	     crux-move-beginning-of-line
+	     crux-delete-file-and-buffer
+	     crux-rename-buffer-and-file)
   :config
   ;; kills the line except for the leading indentation
   (global-set-key (kbd "M-<backspace>") 'crux-kill-line-backwards)
@@ -315,6 +321,7 @@
   (setq company-minimum-prefix-length 1 ;; default is 3
 	company-idle-delay 0.0 ;; default is 0.2
 	company-show-numbers t
+	company-global-modes '(not org-mode)
 	)
 )
 
@@ -409,14 +416,14 @@
 (use-package go-mode
   :ensure t
   :config
-  (setq gofmt-command "goimports")
-  ;; Do I need to configure company?
-  ;; what's go-projectile?
+  (setq gofmt-command "goimports") ; I don't think this is actually used by LSP though
   (add-hook 'go-mode-hook 'lsp-deferred)
   (defun lsp-go-install-save-hooks ()
     (add-hook 'before-save-hook #'lsp-format-buffer t t)
     (add-hook 'before-save-hook #'lsp-organize-imports t t))
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (add-hook 'go-mode-hook #'go-eldoc-setup)
+  (add-hook 'go-mode-hook #'subword-mode)
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
   )
@@ -521,6 +528,8 @@
   )
 
 (define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
+
+(setq-default fill-column 100)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom
 (custom-set-variables
@@ -535,7 +544,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(ace-window magit lsp-mode diff-hl exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(go-eldoc vterm ace-window magit lsp-mode diff-hl exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
@@ -583,8 +592,6 @@
 ;; prelude-emacs-lisp
 ;; => nifty auto-recompile on save with some smartness
 ;; => rainbow-mode to colorize strings like #FFFFFF according to their value
-
-;; prelude-go
 
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
