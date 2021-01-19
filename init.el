@@ -188,9 +188,9 @@
 (use-package zop-to-char
   :ensure t
   :commands (zop-to-char zop-up-to-char)
-  :config
-  (global-set-key (kbd "M-z") 'zop-up-to-char)
-  (global-set-key (kbd "M-Z") 'zop-to-char)
+  :bind
+  (( "M-z" . 'zop-up-to-char)
+   ( "M-Z" . 'zop-to-char))
   )
 
 ;; Highlight the line that point is located on! Nifty little mode.
@@ -231,18 +231,19 @@
 	     crux-move-beginning-of-line
 	     crux-delete-file-and-buffer
 	     crux-rename-buffer-and-file)
-  :config
-  ;; kills the line except for the leading indentation
-  (global-set-key (kbd "M-<backspace>") 'crux-kill-line-backwards)
-  ;; moves to the start of the text (after whitespace) at the beginning of line
-  ;; or, if already in front of all text, toggles between first column and first text
-  (global-set-key [remap move-beginning-of-line] 'crux-move-beginning-of-line)
-  (global-set-key (kbd "C-c D") 'crux-delete-file-and-buffer)
-  ;; The only awkward thing about this one is that it doesn't integrate with ivy
-  ;; But usually renaming is simple enough that it's still worth using.
-  (global-set-key (kbd "C-c r") 'crux-rename-buffer-and-file)
-  ;; there's more than can be found in prelude, if curious
-  )
+  :bind
+  (
+   ;; kills the line except for the leading indentation
+   ("M-<backspace>" . 'crux-kill-line-backwards)
+   ;; moves to the start of the text (after whitespace) at the beginning of line
+   ;; or, if already in front of all text, toggles between first column and first text
+   ([remap move-beginning-of-line] . 'crux-move-beginning-of-line)
+   ("C-c D" . 'crux-delete-file-and-buffer)
+   ;; The only awkward thing about this one is that it doesn't integrate with ivy
+   ;; But usually renaming is simple enough that it's still worth using.
+   ("C-c r" . 'crux-rename-buffer-and-file)
+   ;; there's more than can be found in prelude, if curious
+   ))
 
 
 ;; Don't disable narrowing commands
@@ -401,6 +402,8 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Various special-mode configs
+
 ;; Rust configuration
 (use-package rustic
   :ensure t
@@ -410,9 +413,7 @@
 ;; rustic-mode come built-in with lsp-mode integration, so no need to add a hook
 ;; to rustic-mode to enable LSP.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Go config
-
 (use-package go-mode
   :ensure t
   :config
