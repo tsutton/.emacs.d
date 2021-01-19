@@ -429,6 +429,15 @@
    '(("gopls.staticcheck" t t)))
   )
 
+
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "md2html"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Org mode
 (require 'org)
@@ -526,6 +535,9 @@
   :ensure t
   :commands (ace-window)
   :bind ([remap other-window] . ace-window)
+  ;; Other possibly useful variables:
+  ;; - aw-scope (by default it's 'global, but might want 'frame instead)
+  ;; - the faces used by ace
   )
 
 (define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
@@ -550,6 +562,7 @@
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
  '(scroll-preserve-screen-position t)
+ '(sp-highlight-pair-overlay nil)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
  '(uniquify-separator "/"))
@@ -597,5 +610,6 @@
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
 ;; global subword or just in golang?
+;; TODO no-littering https://github.com/emacscollective/no-littering
 (provide 'init)
 ;;; init.el ends here
