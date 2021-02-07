@@ -24,7 +24,7 @@
 (use-package diminish
   :ensure t)
 
-;; NOTE: Most, but not all, modes are declared by usage-package
+;; NOTE: Most, but not all, modes are declared by use-package
 ;; Some modes that aren't configured in any special way are just listed under
 ;; custom package-selected-packages variable
 
@@ -34,6 +34,23 @@
   :config
   (exec-path-from-shell-initialize)
   )
+
+;; no-littering helps organize the random files that various modes use to save state
+;; it is basically a giant file which does a bunch of setq to change the variables
+;; the those modes use as their save location to put them under either:
+;; .emacs.d/etc/ (for config-type files)
+;; .emacs.d/var/ (for savestates)
+;; We want to load it fairly early because otherwise, other modes may run and start
+;; creating their files and such before the locations have been changed.
+;; NOTE When setting up no-littering, if you want to preserve existing config/state,
+;; you must manually look up where to put your existing files for them to keep working.
+;; It's a hassle :/
+(use-package no-littering
+  :ensure t
+  )
+
+(setq auto-save-file-name-transforms
+      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text editting (search, navigation, completion)
@@ -582,6 +599,7 @@
 (define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
 
 (setq-default fill-column 100)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom
 (custom-set-variables
@@ -596,7 +614,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(diff-hl lsp-metals sbt-mode async scala-mode go-eldoc vterm ace-window magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
@@ -615,13 +633,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Borderline things to consider in the future
 
-;; Moving autosave and other state-storing files to a dedicated location:
-;; - backup-directory-alist
-;; - undo-tree-history-directory-alist plus persisting undo-tree in the first place with
-;;   undo-tree-auto-save-history
-;; - recentf-save-file
-;; - save-place-file
-
 ;; hippie-expand and dabbrev
 ;; There is plenty of example setup for this e.g. in prelude and in purcell/emacs.d
 
@@ -636,8 +647,6 @@
        '(search-ring regexp-search-ring))
 ;;       ;; save every minute
 ;;       savehist-autosave-interval 60
-;;       ;; keep the home clean
-;;       savehist-file (expand-file-name "savehist" prelude-savefile-dir))
 (savehist-mode +1)
 
 ;; some dired mode config
@@ -649,6 +658,5 @@
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
 ;; global subword or just in golang?
-;; TODO no-littering https://github.com/emacscollective/no-littering
 (provide 'init)
 ;;; init.el ends here
