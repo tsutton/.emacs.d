@@ -185,7 +185,7 @@
 (diminish 'global-whitespace-mode)
 (defun enable-on-save-whitespace ()
   "Add a hook to \"before-save-hook\" to cleanup trailing whitespace."
-  (add-hook 'before-save-hook 'whitespace-cleanup)
+  (add-hook 'before-save-hook 'whitespace-cleanup 0 t)
   )
 (add-hook 'text-mode-hook 'enable-on-save-whitespace)
 (add-hook 'prog-mode-hook 'enable-on-save-whitespace)
@@ -283,7 +283,7 @@
 
 (defun enable-on-save-lsp-format ()
   "Add a hook to \"before-save-hook\" to cleanup trailing whitespace."
-  (add-hook 'before-save-hook 'lsp-format-buffer)
+  (add-hook 'before-save-hook 'lsp-format-buffer 0 t)
   )
 
 ;; I am not sure the right place to set this lsp-keymap-prefix
@@ -439,7 +439,6 @@
   (setq gofmt-command "goimports") ; I don't think this is actually used by LSP though
   (add-hook 'go-mode-hook 'lsp-deferred)
   (defun lsp-go-install-save-hooks ()
-    (add-hook 'before-save-hook #'lsp-format-buffer t t)
     (add-hook 'before-save-hook #'lsp-organize-imports t t))
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
   (add-hook 'go-mode-hook #'go-eldoc-setup)
