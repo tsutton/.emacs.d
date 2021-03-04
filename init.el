@@ -103,12 +103,31 @@
   ;; (global-set-key (kbd "C-c k") 'counsel-rg)
   )
 
-;; TODO setup prescient
-;; (use-package prescient
-;;   :ensure t
-;;   :commands (ivy-prescient)
-;;   :config
-;;   (ivy-p))
+;; prescient is a system for reordering the candidates for autocomplete systems.
+;; I use it with ivy and company (configured below).
+;; Ivy and company still do their thing as far as interface and providing the list of
+;; possible doodads, then prescient reorders them.
+(use-package prescient
+  :ensure t
+  :config
+  (prescient-persist-mode)
+  )
+
+(use-package ivy-prescient
+  :ensure t
+  ;; according to docs, must be loaded after counsel, since both modify ivy
+  :after counsel
+  :diminish
+  :config
+  (ivy-prescient-mode)
+  )
+
+(use-package company-prescient
+  :ensure t
+  :diminish
+  :config
+  (company-prescient-mode)
+  )
 
 ;; avy is a package for navigation - it lets you easily move point to somewhere
 ;; else on screen. I try to use it when I remember, although honestly
@@ -613,7 +632,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
