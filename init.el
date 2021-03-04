@@ -290,7 +290,9 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
+;; set-goal-column is mostly useful with keyboard macros
 (put 'set-goal-column 'disabled nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General programming config (lsp, symbol completion, linting, project management, etc)
 (use-package flycheck
@@ -305,10 +307,6 @@
   (add-hook 'before-save-hook 'lsp-format-buffer 0 t)
   )
 
-;; I am not sure the right place to set this lsp-keymap-prefix
-;; I'm setting it here, which does WORK, but flycheck complains.
-(setq lsp-keymap-prefix "C-c l")
-
 (use-package lsp-mode
   :defer t
   :ensure t
@@ -318,6 +316,8 @@
 	     lsp-organize-imports
 	     lsp-register-custom-settings
 	     )
+  :init
+  (setq lsp-keymap-prefix "C-c l")
   :hook (
 	 (lsp-mode . lsp-enable-which-key-integration)
 	 (lsp-mode . enable-on-save-lsp-format)
@@ -618,6 +618,16 @@
 
 (setq-default fill-column 100)
 
+;; savehist keeps track of minibuffer history
+(require 'savehist)
+ (setq savehist-additional-variables
+;;       ;; search entries
+       '(search-ring regexp-search-ring))
+;;       ;; save every minute
+;;       savehist-autosave-interval 60
+(savehist-mode +1)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom
 (custom-set-variables
@@ -652,27 +662,13 @@
 ;; Borderline things to consider in the future
 
 ;; hippie-expand and dabbrev
-;; There is plenty of example setup for this e.g. in prelude and in purcell/emacs.d
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; WIPs from prelude;
-;; golang
-
-;; savehist keeps track of minibuffer history
-(require 'savehist)
- (setq savehist-additional-variables
-;;       ;; search entries
-       '(search-ring regexp-search-ring))
-;;       ;; save every minute
-;;       savehist-autosave-interval 60
-(savehist-mode +1)
-
+;;   There is plenty of example setup for this e.g. in prelude and in purcell/emacs.d
+;; Treemacs and its lsp integration
+;; golang => prelude had some handy keybinds I might want to adapt
 ;; some dired mode config
-
 ;; prelude-emacs-lisp
 ;; => nifty auto-recompile on save with some smartness
 ;; => rainbow-mode to colorize strings like #FFFFFF according to their value
-
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
 ;; global subword or just in golang?
