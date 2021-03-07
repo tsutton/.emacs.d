@@ -464,6 +464,11 @@
   (add-hook 'go-mode-hook #'subword-mode)
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; terraform
+
+(use-package terraform-mode
+  :ensure t
   )
 
 
@@ -539,7 +544,7 @@
  org-refile-targets '((org-agenda-files :maxlevel . 2))
  )
 (cond
- ((equal (system-name) "quillen")
+ ((equal (system-name) "quillen.local")
   (setq org-agenda-files (quote ("~/general.org")))
   (setq org-directory "~/")
   )
@@ -659,7 +664,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(company-prescient ivy-prescient prescient lsp-metals posframe sbt-mode scala-mode no-littering company-terraform terraform-mode go-eldoc vterm ace-window magit lsp-mode diff-hl exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
