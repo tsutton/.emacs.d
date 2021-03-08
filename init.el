@@ -53,7 +53,7 @@
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Text editting (search, navigation, completion)
+;; Text editing (search, navigation, completion)
 
 (use-package ivy
   :ensure t
@@ -82,11 +82,11 @@
 ;; counsel-find-file, M-o j will open the file in the other window (or it can be
 ;; inserted, etc...)
 ;; TODO I thought counsel (or maybe in combination with savehist) would order M-x
-;;      resuts by recent, but it doesn't seem to do that.
+;;      results by recent, but it doesn't seem to do that.
 (use-package counsel
   :ensure t
   :diminish
-  ;; todo defer loading and use :commands with these binds
+  ;; TODO defer loading and use :commands with these binds
   :config
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
@@ -133,10 +133,10 @@
 ;; else on screen. I try to use it when I remember, although honestly
 ;; most of the time I just use isearch for this functionality.
 ;; avy-goto-char-timer lets you type a few characters, then when you stop typing,
-;; for each place visible in a window, it shows a short sequnce of chars
+;; for each place visible in a window, it shows a short sequence of chars
 ;; and if you follow up by typing one of those, it jumps point to that place.
 ;; e.g. if I see the word edge on screen, and I want to navigate to it,
-;; I do C-c j edge <pause>, then it'll show a character for each occurance
+;; I do C-c j edge <pause>, then it'll show a character for each occurrence
 ;; of edge in view, and I type one of those to pick.
 (use-package avy
   :ensure t
@@ -173,7 +173,7 @@
 ;;    B   D
 ;;    |
 ;;    C
-;; and doesn't track undos as operations that can, themeslves, be undone.
+;; and doesn't track undos as operations that can, themselves, be undone.
 ;; Plus it provides a nice interface to open up this tree in a buffer and navigate
 ;; up and down the history. Even when the tree is actually flat, this can be handy
 ;; for finding the correct stopping point when undoing a lot of stuff.
@@ -245,7 +245,7 @@
 ;; the text being replaced (as does builtin query-replace), but anzu also shows
 ;; the text that will be inserted, and it highlights matches while still typing
 ;; the query (as opposed to builtin, which only highlights after pressing RET on
-;; the query). This is especially handly for regexp, and especially for regexp
+;; the query). This is especially handy for regexp, and especially for regexp
 ;; where the replacement has refs to groups matched by the regexp
 (use-package anzu
   :ensure t
@@ -340,7 +340,7 @@
   :commands lsp-ivy-workspace-symbol
   )
 
-;; company is a great autocomplete frontend for editting
+;; company is a great autocomplete frontend for editing
 ;; It integrates well with most backends, including lsp-mode
 ;; In other words, lsp-mode's connection to the language server
 ;; provides the possibilities for what the completion is,
@@ -379,7 +379,7 @@
 
 ;; Similar to how counsel enhances builtins, counsel-projectile takes things
 ;; a step further than the basic usage of ivy as completion for projectile.
-;; Note, there's a funky bug with counsel-projectile-switch-projcet where pressing
+;; Note, there's a funky bug with counsel-projectile-switch-project where pressing
 ;; ivy-restrict-to-input doesn't actually restrict (though it does erase input).
 ;; TODO either fix that bug, or rebind the non-counsel version directly.
 (use-package counsel-projectile
@@ -464,6 +464,7 @@
   (add-hook 'go-mode-hook #'subword-mode)
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
+  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; terraform
 
@@ -664,7 +665,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(company-prescient ivy-prescient prescient lsp-metals posframe sbt-mode scala-mode no-littering company-terraform terraform-mode go-eldoc vterm ace-window magit lsp-mode diff-hl exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
