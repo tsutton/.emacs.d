@@ -461,7 +461,6 @@
     (add-hook 'before-save-hook #'lsp-organize-imports t t))
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
   (add-hook 'go-mode-hook #'go-eldoc-setup)
-  (add-hook 'go-mode-hook #'subword-mode)
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
   )
@@ -660,8 +659,12 @@
 ;; I almost always rename terminal buffers (using rename-buffer), typically to ${something}-terminal
 ;; It would be nice to have some easy way to do this.
 
+(add-hook 'prog-mode-hook #'subword-mode)
+(add-hook 'yaml-mode-hook #'subword-mode) ; yaml-mode doesn't inherit prog-mode
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom
+;; I try to only use custom-set-variables for built-ins.
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -703,6 +706,6 @@
 ;; => rainbow-mode to colorize strings like #FFFFFF according to their value
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
-;; global subword or just in golang?
+
 (provide 'init)
 ;;; init.el ends here
