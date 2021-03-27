@@ -446,7 +446,21 @@
 (use-package rustic
   :ensure t
   :config
+  ;; defer formatting to lsp-mode
   (setq rustic-format-on-save nil)
+
+  ;; there are tons of LSP settings we might want to set, see
+  ;; https://emacs-lsp.github.io/lsp-mode/page/lsp-rust/#lsp-rust-analyzer-cargo-watch-command
+  ;; https://rust-analyzer.github.io/manual.html
+  ;; The default behavior of rust-analyzer is to awkwardly merge imports and merge-y as possible
+  ;; Instead, do something sane - don't do any nested merges.
+  (setq lsp-rust-analyzer-import-merge-behaviour "last")
+  ;; I think this gets clippy feedback into flycheck or something, I'm not exactly sure
+  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+
+  ;; Some things to test to improve proc macro support
+  ; (setq lsp-rust-analyzer-cargo-load-out-dirs-from-check t)
+  ; (setq lsp-rust-analyzer-proc-macro-enable t )
   )
 ;; rustic-mode come built-in with lsp-mode integration, so no need to add a hook
 ;; to rustic-mode to enable LSP.
@@ -706,6 +720,9 @@
 ;; => rainbow-mode to colorize strings like #FFFFFF according to their value
 ;; check out company-terraform for terraform autocompletes? plus terraform-mode and its recommended format
 ;; set-mark-command-repeat-pop t
+
+;; rust notes
+;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
 
 (provide 'init)
 ;;; init.el ends here
