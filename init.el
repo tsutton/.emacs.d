@@ -676,6 +676,9 @@
 (add-hook 'prog-mode-hook #'subword-mode)
 (add-hook 'yaml-mode-hook #'subword-mode) ; yaml-mode doesn't inherit prog-mode
 
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(require 'jiq)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom
 ;; I try to only use custom-set-variables for built-ins.
