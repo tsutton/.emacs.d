@@ -676,6 +676,10 @@
 (add-hook 'prog-mode-hook #'subword-mode)
 (add-hook 'yaml-mode-hook #'subword-mode) ; yaml-mode doesn't inherit prog-mode
 
+;; jiq is a hacky little mode I made for using the jq command line tool, interactively
+;; It is very much a WIP, but as is, it can be used for pulling data out of a JSON buffer
+;; where you might not know exactly the jq filter ahead of time.
+;; TODO work more on jiq mode
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (require 'jiq)
 
