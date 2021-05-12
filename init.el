@@ -111,6 +111,7 @@
   :ensure t
   :config
   (prescient-persist-mode)
+  (setq prescient-sort-full-matches-first t)
   )
 
 (use-package ivy-prescient
@@ -615,18 +616,18 @@
   ;;	       )
   ;; :defer t
   :ensure t
-  :config
-  (load-theme 'ample t)
+  ; :config
+  ; (load-theme 'ample t)
   )
 
 (use-package doom-themes
   :ensure t
-  ;; :config
-  ;; (load-theme 'doom-Iosvkem t)
+  :config
+  (load-theme 'doom-Iosvkem t)
   ;; (load-theme 'doom-molokai t t)
   ;; (load-theme 'doom-Iosvkem t t)
   ;; (load-theme 'doom-tomorrow-night t t)
-  ;; (enable-theme 'doom-vibrant)
+  ;; (load-theme 'doom-vibrant)
   )
 ;; It's really close between these four themes and ample above...
 ;; I think Iosvkem > vibrant > molokai
@@ -663,6 +664,8 @@
 (savehist-mode +1)
 
 
+;; vterm is a terminal emulator for emacs. It's a fully featured term and runs your favorite shell (zsh, for me).
+;; At the same time, it's within emacs, so it integrates with your normal emacs life.
 (use-package vterm
   :ensure t
   :bind
