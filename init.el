@@ -462,6 +462,9 @@
   :config
   ;; defer formatting to lsp-mode
   (setq rustic-format-on-save nil)
+  ;; The default is this WITHOUT the `-D warnings'.
+  ;; I started adding -D warnings since that's what the default/quickstart CI configuration for Rust does.
+  (setq rustic-flycheck-clippy-params "--message-format=json -Zunstable-options -- -D warnings")
 
   ;; there are tons of LSP settings we might want to set, see
   ;; https://emacs-lsp.github.io/lsp-mode/page/lsp-rust/#lsp-rust-analyzer-cargo-watch-command
@@ -473,8 +476,9 @@
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
 
   ;; Some things to test to improve proc macro support
-  ; (setq lsp-rust-analyzer-cargo-load-out-dirs-from-check t)
-  ; (setq lsp-rust-analyzer-proc-macro-enable t )
+  ;; setq lsp-rust-analyzer-cargo-load-out-dirs-from-check t)
+  (setq lsp-rust-analyzer-proc-macro-enable t )
+
   )
 ;; rustic-mode come built-in with lsp-mode integration, so no need to add a hook
 ;; to rustic-mode to enable LSP.
