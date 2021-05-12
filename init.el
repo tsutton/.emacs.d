@@ -340,6 +340,20 @@
   :commands lsp-ivy-workspace-symbol
   )
 
+;; Use the Debug Adapter Protocol for running tests and debugging
+(use-package posframe
+  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
+  :ensure t
+  )
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode)
+  )
+
+(require 'dap-go)
+(dap-go-setup)
+
 ;; company is a great autocomplete frontend for editing
 ;; It integrates well with most backends, including lsp-mode
 ;; In other words, lsp-mode's connection to the language server
@@ -519,17 +533,6 @@
 )
 (use-package lsp-metals
   :config (setq lsp-metals-treeview-show-when-views-received t))
-
-;; Use the Debug Adapter Protocol for running tests and debugging
-(use-package posframe
-  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
-  :ensure t
-  )
-(use-package dap-mode
-  :hook
-  (lsp-mode . dap-mode)
-  (lsp-mode . dap-ui-mode)
-  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Org mode
@@ -671,7 +674,8 @@
   )
 ;; TODO Help with renaming vterms
 ;; I almost always rename terminal buffers (using rename-buffer), typically to ${something}-terminal
-;; It would be nice to have some easy way to do this.
+;; It would be nice to have some easy way to do this. Maybe just a thin wrapper around `vterm' which
+;; does asks for a name.
 
 (add-hook 'prog-mode-hook #'subword-mode)
 (add-hook 'yaml-mode-hook #'subword-mode) ; yaml-mode doesn't inherit prog-mode
@@ -694,11 +698,13 @@
  '(blink-cursor-mode nil)
  '(column-number-mode t)
  '(confirm-kill-emacs 'y-or-n-p)
+ '(custom-safe-themes
+   '("79278310dd6cacf2d2f491063c4ab8b129fee2a498e4c25912ddaa6c3c5b621e" default))
  '(delete-active-region nil)
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(forge terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(dap-go forge terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
