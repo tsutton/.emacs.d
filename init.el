@@ -32,7 +32,9 @@
 (use-package exec-path-from-shell
   :ensure t
   :config
-  (exec-path-from-shell-initialize)
+  (when (not (equal system-type 'windows-nt) )
+    (exec-path-from-shell-initialize)
+    )
   )
 
 ;; no-littering helps organize the random files that various modes use to save state
@@ -347,13 +349,14 @@
   :ensure t
   )
 (use-package dap-mode
+  :init
+  (require 'dap-go)
+  (dap-go-setup)
   :hook
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode)
   )
 
-(require 'dap-go)
-(dap-go-setup)
 
 ;; company is a great autocomplete frontend for editing
 ;; It integrates well with most backends, including lsp-mode
@@ -537,6 +540,7 @@
    (setq sbt:program-options '("-Dsbt.supershell=false"))
 )
 (use-package lsp-metals
+  :ensure t
   :config (setq lsp-metals-treeview-show-when-views-received t))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
