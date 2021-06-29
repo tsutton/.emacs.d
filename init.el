@@ -116,6 +116,10 @@
   (setq prescient-sort-full-matches-first t)
   )
 
+(use-package company-web
+  :ensure t
+  )
+
 (use-package ivy-prescient
   :ensure t
   ;; according to docs, must be loaded after counsel, since both modify ivy
@@ -715,7 +719,7 @@
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   '(dap-go forge terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
+   '(tide company-web web-mode dap-go forge terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
  '(require-final-newline t)
  '(ring-bell-function 'ignore)
  '(scroll-bar-mode nil)
@@ -747,6 +751,28 @@
 
 ;; rust notes
 ;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
+
+(use-package tide
+  :ensure t
+  )
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
 
 (provide 'init)
 ;;; init.el ends here
