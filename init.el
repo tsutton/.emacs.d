@@ -8,10 +8,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialize package-related things.
-;; Add MELPA as a package source
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(setq straight-use-package-by-default t)
+
+(straight-use-package 'use-package)
+
 ;; out-of-band: install use-package from MELPA e.g M-x package-install RET use-package RET
 (eval-when-compile
   (require 'use-package))
@@ -377,7 +389,7 @@
   :config
   (setq company-minimum-prefix-length 1 ;; default is 3
 	company-idle-delay 0.0 ;; default is 0.2
-	company-show-numbers t
+	company-show-quick-access t
 	company-global-modes '(not org-mode)
 	)
 )
@@ -575,8 +587,8 @@
   (setq org-directory "~/")
   )
  (t
-  (setq org-agenda-files (quote ("~/Dropbox/todo.org" "~/Dropbox/notes.org")))
-  (setq org-directory "~/Dropbox")
+  (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org")))
+  (setq org-directory "~/OneDrive")
   )
  )
 
