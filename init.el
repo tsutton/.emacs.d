@@ -24,9 +24,17 @@
 
 (straight-use-package 'use-package)
 
+;; benchmark-init can be used to get timings of initialization
+;; (use-package benchmark-init
+;;   :ensure t
+;;   :config
+;;   ;; To disable collection of benchmark data after init is done.
+;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
 ;; out-of-band: install use-package from MELPA e.g M-x package-install RET use-package RET
 (eval-when-compile
   (require 'use-package))
+
 ;;  use-package is only needed at compile time, but in order for
 ;; the :bind keyword to work, bind-key is needed at runtime
 (require 'bind-key)
@@ -360,13 +368,14 @@
   ;; Posframe is a pop-up tool that must be manually installed for dap-mode
   :ensure t
   )
+
 (use-package dap-mode
-  :init
-  (require 'dap-go)
-  (dap-go-setup)
   :hook
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode)
+  :config
+  (require 'dap-go)
+  (dap-go-setup)
   )
 
 
@@ -395,6 +404,7 @@
 )
 
 (use-package projectile
+  :defer t
   :ensure t
   :config
   (setq projectile-completion-system 'ivy)
@@ -475,6 +485,7 @@
 ;; Rust configuration
 (use-package rustic
   :ensure t
+  :defer t
   :config
   ;; defer formatting to lsp-mode
   (setq rustic-format-on-save nil)
@@ -494,7 +505,6 @@
   ;; Some things to test to improve proc macro support
   ;; setq lsp-rust-analyzer-cargo-load-out-dirs-from-check t)
   (setq lsp-rust-analyzer-proc-macro-enable t )
-
   )
 ;; rustic-mode come built-in with lsp-mode integration, so no need to add a hook
 ;; to rustic-mode to enable LSP.
@@ -502,6 +512,7 @@
 ;; Go config
 (use-package go-mode
   :ensure t
+  :defer t
   :config
   (setq gofmt-command "goimports") ; I don't think this is actually used by LSP though
   (add-hook 'go-mode-hook 'lsp-deferred)
@@ -517,6 +528,7 @@
 
 (use-package terraform-mode
   :ensure t
+  :mode "\\.tf\\'"
   )
 
 
@@ -526,7 +538,7 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "md2html"))
+  :config (setq markdown-command "md2html"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Scala
@@ -540,7 +552,8 @@
 ;; Enable sbt mode for executing sbt commands
 (use-package sbt-mode
   :ensure t
-  :commands sbt-start sbt-command
+  :defer t
+  :commands (sbt-start sbt-command)
   :config
   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
   ;; allows using SPACE when in the minibuffer
@@ -553,48 +566,58 @@
 )
 (use-package lsp-metals
   :ensure t
+  :defer t
   :config (setq lsp-metals-treeview-show-when-views-received t))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Org mode
-(require 'org)
-(require 'org-agenda)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(add-hook 'org-mode-hook
-	  (lambda () (progn
-		       (define-key org-mode-map (kbd "C-M-j") 'org-shiftmetaleft)
-		       (define-key org-mode-map (kbd "C-M-k") 'org-shiftmetaright))))
-(add-hook 'org-mode-hook 'toggle-truncate-lines)
-(setq
- org-agenda-custom-commands
- '(("x" "Un-scheduled" tags "+TODO=\"TODO\"-SCHEDULED<>\"\"-DEADLINE<>\"\"" nil)
-   ("n" "Agenda and all TODOs"
-    ((agenda #1="")
-     (alltodo #1#))))
- org-adapt-indentation nil
- org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
- org-agenda-skip-scheduled-if-deadline-is-shown t
- org-agenda-todo-list-sublevels nil
- org-babel-load-languages '((emacs-lisp . t) (calc . t))
- org-hide-leading-stars t
- org-hierarchical-todo-statistics nil
- org-refile-allow-creating-parent-nodes 'confirm
- org-refile-targets '((org-agenda-files :maxlevel . 2))
- )
-(cond
- ((equal (system-name) "quillen.local")
-  (setq org-agenda-files (quote ("~/general.org")))
-  (setq org-directory "~/")
+(use-package org
+  :straight nil
+  :defer t
+  :config
+  (add-hook 'org-mode-hook 'toggle-truncate-lines)
+  (setq
+   org-agenda-custom-commands
+   '(("x" "Un-scheduled" tags "+TODO=\"TODO\"-SCHEDULED<>\"\"-DEADLINE<>\"\"" nil)
+     ("n" "Agenda and all TODOs"
+      ((agenda #1="")
+       (alltodo #1#))))
+   org-adapt-indentation nil
+   org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
+   org-agenda-skip-scheduled-if-deadline-is-shown t
+   org-agenda-todo-list-sublevels nil
+   org-babel-load-languages '((emacs-lisp . t) (calc . t))
+   org-hide-leading-stars t
+   org-hierarchical-todo-statistics nil
+   org-refile-allow-creating-parent-nodes 'confirm
+   org-refile-targets '((org-agenda-files :maxlevel . 2))
+   )
+  (cond
+   ((equal (system-name) "quillen.local")
+    (setq org-agenda-files (quote ("~/general.org")))
+    (setq org-directory "~/")
+    )
+   (t
+    (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org")))
+    (setq org-directory "~/OneDrive")
+    )
+   )
+  :bind (:map org-mode-map
+	      ("C-M-j" . org-shiftmetaleft)
+	      ("C-M-k" . org-shiftmetaright)
+	      )
   )
- (t
-  (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org")))
-  (setq org-directory "~/OneDrive")
+
+(use-package org-agenda
+  :straight nil
+  :bind ("C-c a" . org-agenda)
   )
- )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unsorted config
 (use-package magit
+  :defer t
   :ensure t)
 
 
@@ -624,17 +647,17 @@
  )
 
 ;; THEMES
-(use-package ample-theme
-  ;; :init (progn (load-theme 'ample t)
-  ;; (load-theme 'ample-flat t)
-  ;; (load-theme 'ample-light t t)
-  ;; (enable-theme 'ample)
-  ;;	       )
-  ;; :defer t
-  :ensure t
-  ; :config
-  ; (load-theme 'ample t)
-  )
+;; (use-package ample-theme
+;;   :init (progn (load-theme 'ample t)
+;;   (load-theme 'ample-flat t)
+;;   (load-theme 'ample-light t t)
+;;   (enable-theme 'ample)
+;; 	       )
+;;   :defer t
+;;   :ensure t
+;;   :config
+;;   (load-theme 'ample t)
+;;   )
 
 (use-package doom-themes
   :ensure t
