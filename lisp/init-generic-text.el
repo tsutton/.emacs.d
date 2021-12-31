@@ -1,4 +1,4 @@
-;;; init-generic-text.el --- Load my emacs config  -*- lexical-binding: t; -*-
+;;; init-generic-text.el --- TODO -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:

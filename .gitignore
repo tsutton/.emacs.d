@@ -1,7 +1,6 @@
 elpa/
-init.elc
 var/
 straight/build
 straight/repos
 straight/build-cache.el
-early-init.elc
+*.elc

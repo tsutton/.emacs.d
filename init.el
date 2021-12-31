@@ -84,8 +84,11 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 (require 'init-look-and-feel)
+(require 'init-emacs-qol)
 (require 'init-version-control)
 (require 'init-generic-text)
+(require 'init-programming)
+(require 'init-lsp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text editing (search, navigation, completion)
@@ -165,37 +168,6 @@
   (company-prescient-mode)
   )
 
-;; avy is a package for navigation - it lets you easily move point to somewhere
-;; else on screen. I try to use it when I remember, although honestly
-;; most of the time I just use isearch for this functionality.
-;; avy-goto-char-timer lets you type a few characters, then when you stop typing,
-;; for each place visible in a window, it shows a short sequence of chars
-;; and if you follow up by typing one of those, it jumps point to that place.
-;; e.g. if I see the word edge on screen, and I want to navigate to it,
-;; I do C-c j edge <pause>, then it'll show a character for each occurrence
-;; of edge in view, and I type one of those to pick.
-(use-package avy
-  :ensure t
-  :commands (avy-goto-char-timer)
-  :bind ("C-c j" . avy-goto-char-timer)
-  :config
-  (setq avy-background t)
-  )
-
-;; which-key makes it so that when you have entered a prefix but not completed
-;; the command, you get a preview in the minibuffer of what your options are
-;; e.g. after typing C-h, I get a list of all the things I can type next to get help
-;; on different topics.
-;; It's a nice little one since it just enhances regular flows without needing to learn
-;; or do anything differently :)
-(use-package which-key
-  :ensure t
-  :diminish
-  :config
-  (which-key-mode +1)
-  )
-
-
 ;; I don't have a lot of custom snippets, but the builtin set is pretty good,
 ;; plus it integrates with lsp-mode for servers to provide their own snippets.
 (use-package yasnippet
@@ -248,106 +220,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General programming config (lsp, symbol completion, linting, project management, etc)
-(use-package flycheck
-  :ensure t
-  :diminish
-  :config
-  (global-flycheck-mode)
-  )
-
-(defun enable-on-save-lsp-format ()
-  "Add a hook to \"before-save-hook\" to cleanup trailing whitespace."
-  (add-hook 'before-save-hook 'lsp-format-buffer 0 t)
-  )
-
-(use-package lsp-mode
-  :defer t
-  :ensure t
-  :commands (lsp
-	     lsp-deferred
-	     lsp-format-buffer
-	     lsp-organize-imports
-	     lsp-register-custom-settings
-	     )
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (
-	 (lsp-mode . lsp-enable-which-key-integration)
-	 (lsp-mode . enable-on-save-lsp-format)
-         (lsp-mode . lsp-lens-mode)
-	 (scala-mode . lsp)
-	 )
-  )
-
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode
-  :bind (:map lsp-ui-mode-map
-	      ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-	      ([remap xref-find-references] . lsp-ui-peek-find-references)
-	      )
-  )
-
-(use-package lsp-ivy
-  :ensure t
-  :defer t
-  :commands lsp-ivy-workspace-symbol
-  )
-
-;; Use the Debug Adapter Protocol for running tests and debugging
-(use-package posframe
-  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
-  :ensure t
-  )
-
-(use-package dap-mode
-  :hook
-  (lsp-mode . dap-mode)
-  (lsp-mode . dap-ui-mode)
-  :config
-  (require 'dap-go)
-  (dap-go-setup)
-  )
-
-
-;; company is a great autocomplete frontend for editing
-;; It integrates well with most backends, including lsp-mode
-;; In other words, lsp-mode's connection to the language server
-;; provides the possibilities for what the completion is,
-;; but it's company-mode that shows them to me and allows me to pick among them
-(use-package company
-  :ensure t
-  :diminish
-  :commands (global-company-mode)
-  :hook (after-init . global-company-mode)
-  :bind (
-	 :map company-mode-map
-	      ("M-/" . company-complete)
-	      ([remap completion-at-point] . company-complete)
-	      ([remap indent-for-tab-command] . company-indent-or-complete-common)
-	 )
-  :config
-  (setq company-minimum-prefix-length 1 ;; default is 3
-	company-idle-delay 0.0 ;; default is 0.2
-	company-show-quick-access t
-	company-global-modes '(not org-mode)
-	)
-)
-
-(use-package projectile
-  :defer t
-  :ensure t
-  :config
-  (setq projectile-completion-system 'ivy)
-  ;; The projectile mode line is too long! I don't need to know the type of
-  ;;  project, I likely already know that immediately from the name.
-  (defun projectile-custom-mode-line ()
-    (let ((project-name (projectile-project-name)))
-      (format " proj:%s"
-              (or project-name "-"))))
-  (setq projectile-mode-line-function 'projectile-custom-mode-line)
-  )
-
 ;; Similar to how counsel enhances builtins, counsel-projectile takes things
 ;; a step further than the basic usage of ivy as completion for projectile.
 ;; Note, there's a funky bug with counsel-projectile-switch-project where pressing
@@ -359,26 +231,6 @@
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (counsel-projectile-mode 1)
   )
-
-(use-package smartparens
-  :ensure t
-  :diminish
-  :hook ((prog-mode . smartparens-mode)
-	 (prog-mode . show-smartparens-mode))
-  :config
-  (require 'smartparens-config) ; sets up default config
-  ;; smartparens has a bunch of keybindings for navigating among parens
-  ;; and moving things in and out, but they don't seem useful outside of lisp
-  ;; so I won't enable them.
-  )
-
-(global-set-key (kbd "M-[") 'beginning-of-defun)
-(global-set-key (kbd "M-]") 'end-of-defun)
-
-;; ==from prelude==
-;; make a shell script executable automatically on save
-(add-hook 'after-save-hook
-          'executable-make-buffer-file-executable-if-script-p)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Various special-mode configs
@@ -519,45 +371,11 @@
   :bind ("C-c a" . org-agenda)
   )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unsorted config
-
-(use-package project)
-
-(fset 'yes-or-no-p 'y-or-n-p)
-
-(diminish 'eldoc-mode)
 (diminish 'auto-revert-mode)
 
-;; recentf tracks recently visited files and integrates into stuff.
-(setq-default
- recentf-max-saved-items 300 ; default is 20
- recentf-max-menu-items 10 ; default is 10
- )
-
-
-(use-package ace-window
-  :ensure t
-  :commands (ace-window)
-  :bind ([remap other-window] . ace-window)
-  ;; Other possibly useful variables:
-  ;; - aw-scope (by default it's 'global, but might want 'frame instead)
-  ;; - the faces used by ace
-  )
-
 (define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
-
-
-;; savehist keeps track of minibuffer history
-(require 'savehist)
- (setq savehist-additional-variables
-;;       ;; search entries
-       '(search-ring regexp-search-ring))
-;;       ;; save every minute
-;;       savehist-autosave-interval 60
-(savehist-mode +1)
-
 
 ;; vterm is a terminal emulator for emacs. It's a fully featured term and runs your favorite shell (zsh, for me).
 ;; At the same time, it's within emacs, so it integrates with your normal emacs life.
@@ -579,9 +397,6 @@
 ;; It would be nice to have some easy way to do this. Maybe just a thin wrapper around `vterm' which
 ;; does asks for a name.
 
-(add-hook 'prog-mode-hook #'subword-mode)
-(add-hook 'yaml-mode-hook #'subword-mode) ; yaml-mode doesn't inherit prog-mode
-
 ;; jiq is a hacky little mode I made for using the jq command line tool, interactively
 ;; It is very much a WIP, but as is, it can be used for pulling data out of a JSON buffer
 ;; where you might not know exactly the jq filter ahead of time.
@@ -596,12 +411,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(confirm-kill-emacs 'y-or-n-p)
- '(inhibit-startup-screen t)
- '(ring-bell-function 'ignore)
- '(sp-highlight-pair-overlay nil)
- '(uniquify-buffer-name-style 'forward nil (uniquify))
- '(uniquify-separator "/"))
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -625,6 +435,10 @@
 
 ;; rust notes
 ;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
+
+;; Plan for refactoring:
+;; - language specific programming
+;; - completion &c.
 
 (provide 'init)
 ;;; init.el ends here
