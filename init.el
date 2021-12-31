@@ -1,5 +1,4 @@
-;;; init.el --- Load my emacs config
-;;; -*- lexical-binding: t; -*-
+;;; init.el --- Load my emacs config -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;; This is my Emacs configuration.
@@ -78,6 +77,15 @@
 
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
+(require 'init-look-and-feel)
+(require 'init-version-control)
+(require 'init-generic-text)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Text editing (search, navigation, completion)
@@ -187,78 +195,6 @@
   (which-key-mode +1)
   )
 
-;; undo-tree replaces emacs' builtin undo-management system with a tree instead.
-;; with built-in undo, when you undo one or more times, and then type, the undo
-;; system creates a single flat list of changes
-;; e.g. type A, then B, then C, then undo twice, then type D, your buffer be AD and
-;; the undo list is this:
-;; A, B, C, (undo C), (undo B), D
-;; Thus if you want to undo back again, you need to undo your undos.
-;; undo-tree replaces this system with one that matches my intuition more conceptually
-;; if I undo back to just A, and then type D, it keeps a TREE of edits, like so
-;;      A
-;;     / \
-;;    B   D
-;;    |
-;;    C
-;; and doesn't track undos as operations that can, themselves, be undone.
-;; Plus it provides a nice interface to open up this tree in a buffer and navigate
-;; up and down the history. Even when the tree is actually flat, this can be handy
-;; for finding the correct stopping point when undoing a lot of stuff.
-(use-package undo-tree
-  :ensure t
-  :diminish
-  :config
-  (global-undo-tree-mode)
-  )
-
-;; browse-kill-ring makes it so that pressing M-y when the previous command
-;; was NOT a yank pulls up the kill ring in a buffer for navigation
-;; It's an alternate kill-ring browser to e.g. counsel-yank-pop, which I don't like as much
-;; since kill-region items are too big really to navigate in mini-buffer.
-(use-package browse-kill-ring
-  :ensure t
-  :config
-  (browse-kill-ring-default-keybindings)
-  )
-
-;; Whitespace mode
-;; This causes trailing spaces and lines that only contain whitespace to be highlighted,
-;; but also causes those spaces to be removed on save in both text-mode and prog-mode.
-;; might switch the after save hook to https://github.com/purcell/whitespace-cleanup-mode
-(require 'whitespace)
-(setq whitespace-style '(face trailing empty))
-(global-whitespace-mode t)
-(diminish 'global-whitespace-mode)
-(defun enable-on-save-whitespace ()
-  "Add a hook to \"before-save-hook\" to cleanup trailing whitespace."
-  (add-hook 'before-save-hook 'whitespace-cleanup 0 t)
-  )
-(add-hook 'text-mode-hook 'enable-on-save-whitespace)
-(add-hook 'prog-mode-hook 'enable-on-save-whitespace)
-
-;; save-place-mode saves the location of point in each file you visit,
-;; and restores point to that place when revisiting it.
-(save-place-mode 1)
-
-;; zop-to-char is a more powerful zap-to-char.
-;; After typing a character, it marks the region that would be killed.
-;; Then, you can either confirm and kill it, or navigate to next/previous instances
-;; of that character before doing so. You can also copy instead of killing.
-;; This handles the common case where I want to kill to, say, ), but didn't notice
-;; that it's actually the second ) that I want to zap to, there was an earlier one as well.
-;; Also, I find that I want to zap-up-to more often then zap-to, so let's bind M-z to that one
-;; while still having zap-to on M-Z.
-(use-package zop-to-char
-  :ensure t
-  :commands (zop-to-char zop-up-to-char)
-  :bind
-  (( "M-z" . 'zop-up-to-char)
-   ( "M-Z" . 'zop-to-char))
-  )
-
-;; Highlight the line that point is located on! Nifty little mode.
-(global-hl-line-mode +1)
 
 ;; I don't have a lot of custom snippets, but the builtin set is pretty good,
 ;; plus it integrates with lsp-mode for servers to provide their own snippets.
@@ -309,17 +245,6 @@
    ;; there's more than can be found in prelude, if curious
    ))
 
-
-;; Don't disable narrowing commands
-(put 'narrow-to-region 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
-
-;; Don't disable case-change functions
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
-;; set-goal-column is mostly useful with keyboard macros
-(put 'set-goal-column 'disabled nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; General programming config (lsp, symbol completion, linting, project management, etc)
@@ -447,44 +372,14 @@
   ;; so I won't enable them.
   )
 
-;; hl-todo-mode provides highlighting for TODO and NOTE and FIXME (by default, it's configurable)
-(use-package hl-todo
-  :ensure t
-  :diminish
-  :config
-  (global-hl-todo-mode)
-  )
-
 (global-set-key (kbd "M-[") 'beginning-of-defun)
 (global-set-key (kbd "M-]") 'end-of-defun)
-
-;; rainbow-delimiters makes parens, brackets, etc different colors depending in nesting depth
-;; It's a bit subtle so I don't get much value of it, but it's better than nothing.
-;; The colors *are* configurable, but eh.
-(use-package rainbow-delimiters
-  :ensure t
-  :diminish
-  :hook (prog-mode . rainbow-delimiters-mode)
-  )
-
 
 ;; ==from prelude==
 ;; make a shell script executable automatically on save
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-;; ==from prelude== (modified to use use-package)
-;; diff-hl shows when a part of a version-controlled file has been modified by changing
-;; the color of the window's fringe. It also provides commands to see the difference and
-;; to jump between these modified hunks, but I haven't integrated those into my flow.
-(use-package diff-hl
-  :ensure t
-  :diminish
-  :config
-  (global-diff-hl-mode +1)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Various special-mode configs
 
@@ -627,28 +522,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Unsorted config
-(use-package magit
-  :defer t
-  :ensure t)
 
 (use-package project)
 
-;; forge lets you interact with things like github PRs and issues from inside magit
-;; It requires external setup for creating and storing, API tokens plus setting
-;; variables (e.g. github username)
-;; For more info, see https://magit.vc/manual/forge/index.html#Top
-(use-package forge
-  :ensure t
-  :after magit)
-
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; =from prelude=
-;; (except I removed the "Prelude" part)
-(setq frame-title-format
-      '("" invocation-name ": " (:eval (if (buffer-file-name)
-                                            (abbreviate-file-name (buffer-file-name))
-                                          "%b"))))
 (diminish 'eldoc-mode)
 (diminish 'auto-revert-mode)
 
@@ -658,39 +536,6 @@
  recentf-max-menu-items 10 ; default is 10
  )
 
-;; THEMES
-;; (use-package ample-theme
-;;   :init (progn (load-theme 'ample t)
-;;   (load-theme 'ample-flat t)
-;;   (load-theme 'ample-light t t)
-;;   (enable-theme 'ample)
-;; 	       )
-;;   :defer t
-;;   :ensure t
-;;   :config
-;;   (load-theme 'ample t)
-;;   )
-
-(use-package doom-themes
-  :ensure t
-  :config
-  (load-theme 'doom-Iosvkem t)
-  ;; (load-theme 'doom-molokai t t)
-  ;; (load-theme 'doom-Iosvkem t t)
-  ;; (load-theme 'doom-tomorrow-night t t)
-  ;; (load-theme 'doom-vibrant)
-  )
-;; It's really close between these four themes and ample above...
-;; I think Iosvkem > vibrant > molokai
-;; tomorrow-night somewhere with the first two, better than molokai
-;; not sure how ample compares, but ample > ample-flat.
-
-;; example theme customization:
-;; (with-eval-after-load "ample-theme"
-;;  (custom-theme-set-faces
-;;    'ample
-;;    ;; this will overwride the color of strings just for ample-theme
-;;    '(font-lock-string-face ((t (:foreground "#bdba81"))))))
 
 (use-package ace-window
   :ensure t
@@ -703,7 +548,6 @@
 
 (define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
 
-(setq-default fill-column 100)
 
 ;; savehist keeps track of minibuffer history
 (require 'savehist)
@@ -742,7 +586,6 @@
 ;; It is very much a WIP, but as is, it can be used for pulling data out of a JSON buffer
 ;; where you might not know exactly the jq filter ahead of time.
 ;; TODO work more on jiq mode
-(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 (require 'jiq)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -753,22 +596,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
- '(column-number-mode t)
  '(confirm-kill-emacs 'y-or-n-p)
- '(custom-safe-themes
-   '("79278310dd6cacf2d2f491063c4ab8b129fee2a498e4c25912ddaa6c3c5b621e" default))
- '(delete-active-region nil)
  '(inhibit-startup-screen t)
- '(menu-bar-mode nil)
- '(package-selected-packages
-   '(dap-go forge terraform-mode company-prescient ivy-prescient prescient diff-hl no-littering lsp-metals sbt-mode async scala-mode go-eldoc vterm magit lsp-mode exec-path-from-shell rainbow-delimiters doom-themes ample-theme crux json-mode yaml-mode markdown-mode go-mode dockerfile-mode anzu yasnippet hl-todo zop-to-char lsp-ui lsp-ivy browse-kill-ring smartparens undo-tree which-key avy counsel-projectile diminish swiper ivy ivy-mode company flycheck rustic use-package))
- '(require-final-newline t)
  '(ring-bell-function 'ignore)
- '(scroll-bar-mode nil)
- '(scroll-preserve-screen-position t)
  '(sp-highlight-pair-overlay nil)
- '(tool-bar-mode nil)
  '(uniquify-buffer-name-style 'forward nil (uniquify))
  '(uniquify-separator "/"))
 (custom-set-faces
