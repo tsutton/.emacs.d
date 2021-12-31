@@ -1,4 +1,5 @@
 ;;; init.el --- Load my emacs config
+;;; -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;; This is my Emacs configuration.
@@ -33,7 +34,11 @@
 
 ;; out-of-band: install use-package from MELPA e.g M-x package-install RET use-package RET
 (eval-when-compile
-  (require 'use-package))
+  (require 'use-package)
+  ;; uncomment this to get messages on package load, and timings if a load is slow
+  ;; which in particular can tell you what's NOT deferred (because it loads on startup)
+  ;; (setq use-package-verbose t)
+  )
 
 ;;  use-package is only needed at compile time, but in order for
 ;; the :bind keyword to work, bind-key is needed at runtime
@@ -360,6 +365,7 @@
 
 (use-package lsp-ivy
   :ensure t
+  :defer t
   :commands lsp-ivy-workspace-symbol
   )
 
@@ -486,6 +492,7 @@
 (use-package rustic
   :ensure t
   :defer t
+  :mode ("\\.rs\\'" . rustic-mode)
   :config
   ;; defer formatting to lsp-mode
   (setq rustic-format-on-save nil)
@@ -523,6 +530,7 @@
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
   )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; terraform
 
@@ -586,11 +594,14 @@
    org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
    org-agenda-skip-scheduled-if-deadline-is-shown t
    org-agenda-todo-list-sublevels nil
-   org-babel-load-languages '((emacs-lisp . t) (calc . t))
    org-hide-leading-stars t
    org-hierarchical-todo-statistics nil
    org-refile-allow-creating-parent-nodes 'confirm
    org-refile-targets '((org-agenda-files :maxlevel . 2))
+   )
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t) (calc . t))
    )
   (cond
    ((equal (system-name) "quillen.local")
@@ -598,7 +609,7 @@
     (setq org-directory "~/")
     )
    (t
-    (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org")))
+    (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org" "~/OneDrive/cs.org")))
     (setq org-directory "~/OneDrive")
     )
    )
@@ -620,6 +631,7 @@
   :defer t
   :ensure t)
 
+(use-package project)
 
 ;; forge lets you interact with things like github PRs and issues from inside magit
 ;; It requires external setup for creating and storing, API tokens plus setting
