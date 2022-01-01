@@ -73,6 +73,22 @@
    ( "M-Z" . 'zop-to-char))
   )
 
+;; Anzu provides incremental improvements to query-replace(-regexp)
+;; It shows how many matches there are for the query. the anzu variant highlights
+;; the text being replaced (as does builtin query-replace), but anzu also shows
+;; the text that will be inserted, and it highlights matches while still typing
+;; the query (as opposed to builtin, which only highlights after pressing RET on
+;; the query). This is especially handy for regexp, and especially for regexp
+;; where the replacement has refs to groups matched by the regexp
+(use-package anzu
+  :ensure t
+  :diminish
+  :config
+  (global-anzu-mode)
+  (global-set-key (kbd "C-M-a") 'anzu-query-replace) ;formerly beginning-of-defun
+  (global-set-key (kbd "C-M-e") 'anzu-query-replace-regexp) ;formerly end-of-defun
+  )
+
 ;; Don't disable case-change functions
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -88,6 +104,14 @@
 
 (setq delete-active-region nil)
 (setq require-final-newline t)
+
+;; I don't have a lot of custom snippets, but the builtin set is pretty good,
+;; plus it integrates with lsp-mode for servers to provide their own snippets.
+(use-package yasnippet
+  :ensure t
+  :config
+  (yas-global-mode)
+  )
 
 (provide 'init-generic-text)
 ;;; init-generic-text.el ends here

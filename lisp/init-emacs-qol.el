@@ -67,5 +67,30 @@
   (which-key-mode +1)
   )
 
+
+;; crux provides little improvements to a bunch of thing
+;; I only use a subset of them, on the theory that for me, if there are too many
+;; key combinations/functions to learn, it ends up a detriment if they all just
+;; are all relatively marginal
+(use-package crux
+  :ensure t
+  :commands (crux-kill-line-backwards
+	     crux-move-beginning-of-line
+	     crux-delete-file-and-buffer
+	     crux-rename-buffer-and-file)
+  :bind
+  (
+   ;; kills the line except for the leading indentation
+   ("M-<backspace>" . 'crux-kill-line-backwards)
+   ;; moves to the start of the text (after whitespace) at the beginning of line
+   ;; or, if already in front of all text, toggles between first column and first text
+   ([remap move-beginning-of-line] . 'crux-move-beginning-of-line)
+   ("C-c D" . 'crux-delete-file-and-buffer)
+   ;; The only awkward thing about this one is that it doesn't integrate with ivy
+   ;; But usually renaming is simple enough that it's still worth using.
+   ("C-c r" . 'crux-rename-buffer-and-file)
+   ;; there's more than can be found in prelude, if curious
+   ))
+
 (provide 'init-emacs-qol)
 ;;; init-emacs-qol.el ends here
