@@ -93,6 +93,7 @@
 (require 'init-rust)
 (require 'init-go)
 (require 'init-scala)
+(require 'init-elisp)
 
 ;; jiq is a hacky little mode I made for using the jq command line tool, interactively
 ;; It is very much a WIP, but as is, it can be used for pulling data out of a JSON buffer
@@ -101,13 +102,12 @@
 (require 'jiq)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; terraform
+;; miscellaneous that doesn't get its own file yet.
 
 (use-package terraform-mode
   :ensure t
   :mode "\\.tf\\'"
   )
-
 
 (use-package markdown-mode
   :ensure t
@@ -116,32 +116,6 @@
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :config (setq markdown-command "md2html"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Unsorted config
-(diminish 'auto-revert-mode)
-
-(define-key emacs-lisp-mode-map (kbd "C-c C-l") 'emacs-lisp-byte-compile-and-load)
-
-;; vterm is a terminal emulator for emacs. It's a fully featured term and runs your favorite shell (zsh, for me).
-;; At the same time, it's within emacs, so it integrates with your normal emacs life.
-(use-package vterm
-  :ensure t
-  :bind
-  ("C-x M-t" . vterm)
-  :config
-  ;; This code allows sets up message passing so that when you change directory inside vterm,
-  ;; emacs also updates your working directory (so that find-file starts from the right place, e.g.)
-  ;; It is required to also add some stuff to your shell config.
-  ;; see https://github.com/akermu/emacs-libvterm
-  ;; The recommended way seems to be modifying the prompt to print some message, but that didn't
-  ;; work for me, so instead I use this method.
-  (add-to-list 'vterm-eval-cmds '("update-pwd" (lambda (path) (setq default-directory path))))
-  )
-;; TODO Help with renaming vterms
-;; I almost always rename terminal buffers (using rename-buffer), typically to ${something}-terminal
-;; It would be nice to have some easy way to do this. Maybe just a thin wrapper around `vterm' which
-;; does asks for a name.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; custom

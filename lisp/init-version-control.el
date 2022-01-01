@@ -5,7 +5,10 @@
 
 (use-package magit
   :defer t
-  :ensure t)
+  :ensure t
+  :config
+  (diminish 'auto-revert-mode)
+  )
 
 ;; forge lets you interact with things like github PRs and issues from inside magit
 ;; It requires external setup for creating and storing, API tokens plus setting
