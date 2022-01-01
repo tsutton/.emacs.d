@@ -151,8 +151,5 @@
 ;; rust notes
 ;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
 
-;; Issues seen:
-;; - magit project-switch-commands issue
-
 (provide 'init)
 ;;; init.el ends here

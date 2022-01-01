@@ -3,6 +3,12 @@
 
 ;;; Code:
 
+;; Some research seems to indicate that there's an issue with rustic and project.
+;; Even though project is built-in, without explicitly using this (which implicitly uses
+;; straight-use-package), magit C-n and C-p don't work for whatever reason.
+;; See https://old.reddit.com/r/emacs/comments/po9cfj/magit_commands_broken/
+(use-package project)
+
 (use-package magit
   :defer t
   :ensure t
