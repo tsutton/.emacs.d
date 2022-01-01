@@ -86,6 +86,7 @@
 (require 'init-org)
 (require 'init-completion)
 (require 'init-programming)
+(require 'init-term)
 
 (require 'init-lsp)
 
@@ -151,7 +152,6 @@
 ;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
 
 ;; Issues seen:
-;; - when magit is loaded, ARev becomes un-diminished. Perhaps I need to load auto-revert-mode before magit?
 ;; - magit project-switch-commands issue
 
 (provide 'init)
