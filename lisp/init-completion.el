@@ -73,15 +73,20 @@
 ;; with Consult is a highlight.
 
 ;; Personally, I don't really value the composability aspect, I value the final resulting UI that I get.
+;; Plus, the compasbile parts still have a bunch of extension packages to install.
 ;; I've used Ivy for a while now, I tried helm and it didn't really speak to me. Now I'm trying Consult+Embark.
 
 ;;; Code:
 
-;; TODO install consult-flycheck and others from https://github.com/minad/consult#recommended-packages
+;; TODO install consult-flycheck, consult-lsp (and maybe others  from https://github.com/minad/consult#recommended-packages)
 ;; TODO explore mct: https://gitlab.com/protesilaos/mct
-;; TODO explore corfu
+;; TODO explore corfu, CAPE
 ;; TODO I'm going to miss counsel+projectile's actions on project, I wonder if there's an embark thing
-
+;; TODO consult's yanking or browse-kill-ring?
+;; TODO customize orderless with dispatchers, to make regex opt-in, add excludes, etc:
+;;      https://old.reddit.com/r/emacs/comments/kqutap/selectrum_prescient_consult_embark_getting_started/
+;;      With this, I'd be happier with orderless than prescient, o/w I feel prescient might edge it out
+;; TODO is consult-line good as an isearch replacement?
 
 ;; Can be "ivy" or "vertico"
 ;; Ivy means Ivy+Swiper+Counsel+Prescient
@@ -182,23 +187,16 @@
   (counsel-projectile-mode 1)
   )
 
-; Enable vertico
 (use-package vertico
   :if (string= ts/completion-stack "vertico")
   :init
+  (setq enable-recursive-minibuffers t)
+
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
   (vertico-mode)
-
-  ;; Different scroll margin
-  ;; (setq vertico-scroll-margin 0)
-
-  ;; Show more candidates
-  ;; (setq vertico-count 20)
-
-  ;; Grow and shrink the Vertico minibuffer
-  ;; (setq vertico-resize t)
-
-  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-  ;; (setq vertico-cycle t)
   )
 
 (use-package orderless
@@ -220,7 +218,6 @@
 ;; This block is copy-pasted from the consult README, with some bits commented out while I explore.
 (use-package consult
   :if (string= ts/completion-stack "vertico")
-  ;; Replace bindings. Lazily loaded due by `use-package'.
   :bind (;; C-c bindings (mode-specific-map)
          ;; ("C-c h" . consult-history)
          ;; ("C-c m" . consult-mode-command)
@@ -267,12 +264,6 @@
          ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
          ("M-s L" . consult-line-multi))           ;; needed by consult-line to detect isearch
 
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI. You may want to also
-  ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
   :init
 
   ;; Optionally configure the register formatting. This improves the register
@@ -285,22 +276,18 @@
   ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
 
-  ;; Optionally replace `completing-read-multiple' with an enhanced version.
   (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
 
   ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
 
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
   :config
 
   ;; Optionally configure preview. The default value
   ;; is 'any, such that any key triggers the preview.
   ;; (setq consult-preview-key 'any)
   ;; (setq consult-preview-key (kbd "M-."))
-  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
@@ -321,28 +308,16 @@
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
 
-  ;; Optionally configure a function which returns the project root directory.
-  ;; There are multiple reasonable alternatives to chose from.
-  ;;;; 1. project.el (project-roots)
-  ;; (setq consult-project-root-function
-  ;;       (lambda ()
-  ;;         (when-let (project (project-current))
-  ;;           (car (project-roots project)))))
-  ;; 2. projectile.el (projectile-project-root)
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root)
-  ;;;; 3. vc.el (vc-root-dir)
-  ;; (setq consult-project-root-function #'vc-root-dir)
-  ;;;; 4. locate-dominating-file
-  ;; (setq consult-project-root-function (lambda () (locate-dominating-file "." ".git")))
 )
 
 (use-package embark
   :if (string= ts/completion-stack "vertico")
   :ensure t
   :bind
-  (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
@@ -368,6 +343,11 @@
   ;; auto-updating embark collect buffer
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package consult-projectile)
+;; With this, consult-projectile is a combo projectile-find-file, projectile-switch-to-buffer, and projectile-switch-project.
+;; And it adds metadata to those for Marginalia and Embark to use.
+;; TODO add Embark actions to consult-projectile-project for open vterm and open magit
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
