@@ -22,9 +22,9 @@
 
 ;; savehist keeps track of minibuffer history
 (require 'savehist)
- (setq savehist-additional-variables
+(setq savehist-additional-variables
 ;;       ;; search entries
-       '(search-ring regexp-search-ring))
+      '(search-ring regexp-search-ring))
 ;;       ;; save every minute
 ;;       savehist-autosave-interval 60
 (savehist-mode +1)

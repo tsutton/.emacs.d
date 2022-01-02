@@ -32,8 +32,12 @@
 (use-package projectile
   :defer t
   :ensure t
+  :init
+  (projectile-mode +1)
+  :bind (:map projectile-mode-map
+              ("C-c p" . projectile-command-map))
   :config
-  (setq projectile-completion-system 'ivy)
+  ;; (setq projectile-completion-system 'ivy)
   ;; The projectile mode line is too long! I don't need to know the type of
   ;;  project, I likely already know that immediately from the name.
   (defun projectile-custom-mode-line ()
