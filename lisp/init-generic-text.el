@@ -26,8 +26,9 @@
   :diminish
   :config
   (global-undo-tree-mode)
+  (setq undo-tree-visualizer-timestamps t)
+  (setq undo-tree-visualizer-diff t)
   )
-
 ;; browse-kill-ring makes it so that pressing M-y when the previous command
 ;; was NOT a yank pulls up the kill ring in a buffer for navigation
 ;; It's an alternate kill-ring browser to e.g. counsel-yank-pop, which I don't like as much
@@ -104,6 +105,7 @@
 
 (setq delete-active-region nil)
 (setq require-final-newline t)
+(setq sentence-end-double-space nil)
 
 ;; I don't have a lot of custom snippets, but the builtin set is pretty good,
 ;; plus it integrates with lsp-mode for servers to provide their own snippets.

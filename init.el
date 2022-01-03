@@ -148,7 +148,6 @@
 ;; set-mark-command-repeat-pop t
 
 ;; rust notes
-;; enable lsp-ui-peek-mode (what does the MODE do when I have the keybindings already?)
 
 (provide 'init)
 ;;; init.el ends here
