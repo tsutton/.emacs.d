@@ -140,7 +140,6 @@
 ;; hippie-expand and dabbrev
 ;;   There is plenty of example setup for this e.g. in prelude and in purcell/emacs.d
 ;; Treemacs and its lsp integration
-;; golang => prelude had some handy keybinds I might want to adapt
 ;; some dired mode config
 ;; prelude-emacs-lisp
 ;; => nifty auto-recompile on save with some smartness

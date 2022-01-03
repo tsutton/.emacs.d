@@ -8,7 +8,6 @@
   :ensure t
   :defer t
   :config
-  (setq gofmt-command "goimports") ; I don't think this is actually used by LSP though
   (add-hook 'go-mode-hook 'lsp-deferred)
   (defun lsp-go-install-save-hooks ()
     (add-hook 'before-save-hook #'lsp-organize-imports t t))
@@ -16,6 +15,11 @@
   (add-hook 'go-mode-hook #'go-eldoc-setup)
   (lsp-register-custom-settings
    '(("gopls.staticcheck" t t)))
+  )
+
+(use-package go-eldoc
+  :ensure t
+  :commands go-eldoc-setup
   )
 
 (provide 'init-go)
