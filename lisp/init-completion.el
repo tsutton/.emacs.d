@@ -1,5 +1,4 @@
 ;;; init-completion.el --- Configure completion for user input -*- lexical-binding: t; -*-
-
 ;;; Commentary:
 
 ;; Completion in Emacs refers to providing completions for user input, typically via the mini-buffer.
@@ -16,7 +15,7 @@
 ;; completion-styles controls the way the partial user input is used to filter the full list of candidates.
 ;; For example, a completion style might allow user input as a regex. Or it might require the partial input to
 ;; match the beginning of the candidate, or any part of the candidate, etc.
-;; The emacs documentation has more, for example:
+;; The Emacs documentation has more, for example:
 ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Completion.html
 ;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html
 ;; Using these APIs, completion can be customized for any function in any package that uses completing-read.
@@ -312,6 +311,7 @@
   (setq consult-project-root-function #'projectile-project-root)
 )
 
+;; TODO on an identifier, there's xref-find-definitions, but not find-references
 (use-package embark
   :if (string= ts/completion-stack "vertico")
   :ensure t
@@ -344,10 +344,50 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package consult-projectile)
+
+(defun ts/vterm-in-project (project-root-dir)
+  "Open a vterm in the project PROJECT-ROOT-DIR."
+  (interactive "D")
+  (let ((default-directory project-root-dir))
+    (call-interactively 'projectile-run-vterm)
+    )
+  )
+
+(defun ts/magit-in-project (project-root-dir)
+  "Open magit-status in the project PROJECT-ROOT-DIR."
+  (interactive "D")
+  (let ((default-directory project-root-dir))
+    (funcall-interactively 'magit-status project-root-dir)
+    )
+  )
+
 ;; With this, consult-projectile is a combo projectile-find-file, projectile-switch-to-buffer, and projectile-switch-project.
 ;; And it adds metadata to those for Marginalia and Embark to use.
-;; TODO add Embark actions to consult-projectile-project for open vterm and open magit
+(use-package consult-projectile
+  :after embark-consult
+  :commands consult-projectile
+  :config
+
+  (embark-define-keymap embark-project-map
+    "Keymap for actions on projectile projects."
+    ("v" ts/vterm-in-project)
+    ("g" ts/magit-in-project)
+    )
+
+  ;; consult-projectile adds a defvar consult-projectile--source-projectile-project which
+  ;; is vertico/consult source backed by projectile-relevant-known-projects as candidates and
+  ;; with the consult-projectile-project category. The candidate list is a path to the root of the
+  ;; project
+  ;; consult-projectile uses ":category 'consult-projectile-project"
+  ;; I'm not exactly sure what that is (an atom beginning with ' ?)
+  ;; But I couldn't get embark-keymap-alist to recognize it
+  ;; for now, I'm using a locally modified consult-projectile which changes it to
+  ;; 'category 'consult-projectile-project
+  ;; TODO can I make this work without modifying consult-projectile?
+  (add-to-list 'embark-keymap-alist '(consult-projectile-project . embark-project-map))
+  )
+
+
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
