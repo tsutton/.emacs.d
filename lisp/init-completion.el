@@ -77,15 +77,35 @@
 
 ;;; Code:
 
-;; TODO install consult-flycheck, consult-lsp (and maybe others  from https://github.com/minad/consult#recommended-packages)
+;; TODO install consult-flycheck and maybe others  from https://github.com/minad/consult#recommended-packages
 ;; TODO explore mct: https://gitlab.com/protesilaos/mct
 ;; TODO explore corfu, CAPE
-;; TODO I'm going to miss counsel+projectile's actions on project, I wonder if there's an embark thing
 ;; TODO consult's yanking or browse-kill-ring?
+;; TODO what actions might I miss from Counsel/Ivy that aren't provided in Embark?
+;;      Maybe edit as sudo or readonly on files?
+;;      https://old.reddit.com/r/emacs/comments/kqutap/selectrum_prescient_consult_embark_getting_started/gi7ql81/
 ;; TODO customize orderless with dispatchers, to make regex opt-in, add excludes, etc:
 ;;      https://old.reddit.com/r/emacs/comments/kqutap/selectrum_prescient_consult_embark_getting_started/
+;;      https://protesilaos.com/emacs/dotemacs#h:5c060e2e-231d-4896-a5d2-b3fb4134764e
 ;;      With this, I'd be happier with orderless than prescient, o/w I feel prescient might edge it out
-;; TODO is consult-line good as an isearch replacement?
+;; TODO is consult-line good as an swiper-isearch replacement? swiper-isearch can navigate when there are
+;;      multiple matches in one line which I used, and regular isearch doesn't have minibuffer preview/vertico
+;; TODO consult-buffer does not delete entire components on backspace at the first / of a directory?
+;; TODO swiper and consult-line have trouble searching for parentheses? - first they get a "no matching parens", THEN the results loadsm making it slow
+;; TODO configure vertico with multiform: https://www.youtube.com/watch?v=hPwDbx--Waw
+;;      e.g. configure some like grep and maybe line to use Buffer
+
+;; What am I liking *BETTER* in consult land?
+;; consult-goto-line is nic
+;; orderless works with both
+;; marginalia and its stuff (like narrowing in consult-buffer) is just okay
+;;   it works well with M-x
+;; does embark work well with ivy? I haven't used embark much yet but we'll see
+;; consult preview is nice
+;; haven't explored consult for marks, bookmarks, registers
+;; maybe on consult-outline/org-heading?
+;; I miss killing multiple buffers from switch buffer. I can do it sorta with embark + consult-buffer, is there
+;;   a way to do embark but then return to the original command instead of exiting?
 
 ;; Can be "ivy" or "vertico"
 ;; Ivy means Ivy+Swiper+Counsel+Prescient
@@ -227,13 +247,27 @@
          ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
          ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ;; Custom M-# bindings for fast register access
+
+         ;; Custom bindings for fast register access
+	 ;; These seem to mainly be useful for people that use registers for different purposes.
+	 ;; Registers can store text, points, rectangles, and more.
+	 ;; Since I only use registers for text, I'm fine with just vertico plus builtin register functions.
+	 ;; Although perhaps I should use registers instead of bookmarks since I mostly use bookmarks
+	 ;; for short-lived places
          ;; ("M-#" . consult-register-load)
          ;; ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
          ;; ("C-M-#" . consult-register)
+
          ;; Other custom bindings
+
+	 ;; Right now I prefer browse-kill-ring's advised yank-pop
+	 ;; Both this and that act as normal yank-pop if the most recent command was a yank.
+	 ;; This one gives you a minibuffer prompt to select text from the kill ring.
+	 ;; browse-kill-ring opens a buffer where I can see large entries and select parts of old text more easily.
          ;; ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+
          ("<help> a" . consult-apropos)            ;; orig. apropos-command
+
          ;; M-g bindings (goto-map)
          ;; ("M-g e" . consult-compile-error)
          ;; ("M-g f" . consult-flycheck)
@@ -242,19 +276,31 @@
          ;; ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading TODO
          ;; ("M-g m" . consult-mark)
          ;; ("M-g k" . consult-global-mark)
-         ;; ("M-g i" . consult-imenu)
+
+	 ;; Can be a good alternative for lsp-ui-imenu or lsp-treemacs in some cases (keyboard instead of visual)
+	 ;; I have a bad habit of using isearch for this, but using this will be faster
+         ("M-g i" . consult-imenu)
+	 ;; I find the -multi commands not terribly useful because they only search BUFFERS not any file
+	 ;; that I don't have open.
          ;; ("M-g I" . consult-imenu-multi)
+
          ;; M-s bindings (search-map)
          ;; ("M-s d" . consult-find)
          ;; ("M-s D" . consult-locate)
+
+	 ;; I often use rg or rg-menu from rg.el over these, however,
+	 ;; these have the advanage of live preview which is nice sometimes.
          ;; ("M-s g" . consult-grep)
-         ;; ("M-s G" . consult-git-grep)
-         ;; ("M-s r" . consult-ripgrep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+
          ("M-s l" . consult-line)
          ;; ("M-s L" . consult-line-multi)
+
          ;; ("M-s m" . consult-multi-occur)
          ;; ("M-s k" . consult-keep-lines)
          ;; ("M-s u" . consult-focus-lines)
+
          ;; Isearch integration
          ;; ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
@@ -265,13 +311,12 @@
 
   :init
 
-  ;; Optionally configure the register formatting. This improves the register
+  ;; Configure the register formatting. This improves the register
   ;; preview for `consult-register', `consult-register-load',
   ;; `consult-register-store' and the Emacs built-ins.
   (setq register-preview-delay 0
         register-preview-function #'consult-register-format)
 
-  ;; Optionally tweak the register preview window.
   ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
 
@@ -297,15 +342,12 @@
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
    :preview-key (kbd "M-."))
 
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
+  ;; From a consult read, if you know the narrowing key (e.g. 'f' for files and 'b' for buffers in
+  ;; consult-buffer), you can just press it. But if you don't know the narrow keys, press THIS one and
+  ;; which-key will tell you.
+  (setq consult-narrow-key "<")
 
-  (recentf-mode +1) ;; Not sure if this is the best place for it
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+  (recentf-mode +1) ;; Not sure if this is the best place for this.
 
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-root-function #'projectile-project-root)
@@ -322,7 +364,7 @@
 
   :init
 
-  ;; Optionally replace the key help with a completing-read interface
+  ;; Replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
   :config
@@ -333,12 +375,11 @@
                  nil
                  (window-parameters (mode-line-format . none)))))
 
-;; Consult users will also want the embark-consult package.
 (use-package embark-consult
   :if (string= ts/completion-stack "vertico")
   :ensure t
   :after (embark consult)
-  :demand t ; only necessary if you have the hook below
+  :demand t ; want this to load eagerly after embark and consult both load
   ;; if you want to have consult previews as you move around an
   ;; auto-updating embark collect buffer
   :hook
@@ -357,12 +398,12 @@
   "Open magit-status in the project PROJECT-ROOT-DIR."
   (interactive "D")
   (let ((default-directory project-root-dir))
-    (funcall-interactively 'magit-status project-root-dir)
+    (call-interactively 'magit-status)
     )
   )
 
-;; With this, consult-projectile is a combo projectile-find-file, projectile-switch-to-buffer, and projectile-switch-project.
-;; And it adds metadata to those for Marginalia and Embark to use.
+;; With this, consult-projectile is a combo projectile-find-file, projectile-switch-to-buffer,
+;; and projectile-switch-project, and it adds metadata to those for Marginalia and Embark to use.
 (use-package consult-projectile
   :after embark-consult
   :commands consult-projectile
@@ -375,19 +416,28 @@
     )
 
   ;; consult-projectile adds a defvar consult-projectile--source-projectile-project which
-  ;; is vertico/consult source backed by projectile-relevant-known-projects as candidates and
-  ;; with the consult-projectile-project category. The candidate list is a path to the root of the
-  ;; project
+  ;; is vertico/consult source backed by jectile-relevant-known-projects as candidates and
+  ;; with the 'consult-projectile-project category. The candidate list is a path to the root of the
+  ;; project.
   ;; consult-projectile uses ":category 'consult-projectile-project"
   ;; I'm not exactly sure what that is (an atom beginning with ' ?)
-  ;; But I couldn't get embark-keymap-alist to recognize it
-  ;; for now, I'm using a locally modified consult-projectile which changes it to
-  ;; 'category 'consult-projectile-project
+  ;; But I couldn't get embark-keymap-alist to recognize it.
+  ;; For now, I'm using a locally modified consult-projectile which changes it to
+  ;; :category consult-projectile-project
   ;; TODO can I make this work without modifying consult-projectile?
   (add-to-list 'embark-keymap-alist '(consult-projectile-project . embark-project-map))
   )
 
-
+(use-package consult-lsp
+  :after (consult lsp)
+  :commands (consult-lsp-symbols consult-lsp-file-symbols)
+  :init
+  ;; normally xref-find-apropos is bound to bound to <lsp-prefix> g a
+  (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols)
+  :config
+  ;; adds light marginalia metadata to consult-lsp(-file)-symbols
+  (consult-lsp-marginalia-mode)
+  )
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
