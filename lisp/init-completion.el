@@ -77,10 +77,8 @@
 
 ;;; Code:
 
-;; TODO install consult-flycheck and maybe others  from https://github.com/minad/consult#recommended-packages
 ;; TODO explore mct: https://gitlab.com/protesilaos/mct
 ;; TODO explore corfu, CAPE
-;; TODO consult's yanking or browse-kill-ring?
 ;; TODO what actions might I miss from Counsel/Ivy that aren't provided in Embark?
 ;;      Maybe edit as sudo or readonly on files?
 ;;      https://old.reddit.com/r/emacs/comments/kqutap/selectrum_prescient_consult_embark_getting_started/gi7ql81/
@@ -96,12 +94,12 @@
 ;;      e.g. configure some like grep and maybe line to use Buffer
 
 ;; What am I liking *BETTER* in consult land?
-;; consult-goto-line is nic
-;; orderless works with both
+;; consult-goto-line is nice
 ;; marginalia and its stuff (like narrowing in consult-buffer) is just okay
-;;   it works well with M-x
+;;   it works well with M-x and C-h f, but for files and buffers it doesn't really help
+;; orderless works with both
 ;; does embark work well with ivy? I haven't used embark much yet but we'll see
-;; consult preview is nice
+;; consult's preview is nice
 ;; haven't explored consult for marks, bookmarks, registers
 ;; maybe on consult-outline/org-heading?
 ;; I miss killing multiple buffers from switch buffer. I can do it sorta with embark + consult-buffer, is there
@@ -353,7 +351,6 @@
   (setq consult-project-root-function #'projectile-project-root)
 )
 
-;; TODO on an identifier, there's xref-find-definitions, but not find-references
 (use-package embark
   :if (string= ts/completion-stack "vertico")
   :ensure t
@@ -380,8 +377,6 @@
   :ensure t
   :after (embark consult)
   :demand t ; want this to load eagerly after embark and consult both load
-  ;; if you want to have consult previews as you move around an
-  ;; auto-updating embark collect buffer
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
@@ -437,6 +432,14 @@
   :config
   ;; adds light marginalia metadata to consult-lsp(-file)-symbols
   (consult-lsp-marginalia-mode)
+  )
+
+(use-package consult-flycheck
+  :after (consult flycheck)
+  :bind (:map flycheck-mode-map
+	      ;; maybe a bit weird to put this outside of flycheck's prefix C-c !
+	      ;; but C-c ! is a bit weird anyway.
+	      ("M-s f" . consult-flycheck))
   )
 
 (provide 'init-completion)
