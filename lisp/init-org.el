@@ -49,5 +49,17 @@
   :bind ("C-c a" . org-agenda)
   )
 
+(use-package org-roam
+  :config
+  (setq org-roam-directory "~/OneDrive/org-roam")
+  (org-roam-db-autosync-mode)
+  :bind
+  (("C-c n f" . org-roam-node-find)
+   :map org-mode-map
+   ("C-c n i" . org-roam-node-insert)
+   ("C-c n b" . org-roam-buffer-toggle)
+   )
+  )
+
 (provide 'init-org)
 ;;; init-org.el ends here
