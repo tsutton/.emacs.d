@@ -26,6 +26,10 @@
          (lsp-mode . lsp-lens-mode)
 	 (scala-mode . lsp)
 	 )
+  :config
+  ;; lsp-mode docs recommend these changes for performance.
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (setq gc-cons-threshold 100000000)
   )
 
 (use-package lsp-ui
