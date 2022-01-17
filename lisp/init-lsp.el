@@ -39,6 +39,8 @@
 	      ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
 	      ([remap xref-find-references] . lsp-ui-peek-find-references)
 	      )
+  :init
+  (setq lsp-ui-doc-show-with-cursor t)
   )
 
 (use-package lsp-ivy
