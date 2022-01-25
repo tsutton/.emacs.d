@@ -86,6 +86,7 @@
 (require 'init-org)
 (require 'init-completion)
 (require 'init-programming)
+(require 'init-structured-text)
 (require 'init-term)
 
 (require 'init-lsp)
