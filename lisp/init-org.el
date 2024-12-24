@@ -33,6 +33,10 @@
     (setq org-agenda-files (quote ("~/general.org")))
     (setq org-directory "~/")
     )
+   ((equal (downcase (system-name)) "visionary-windo")
+    (setq org-agenda-files (quote ("c:/Users/taylo/OneDrive/todo.org" "c:/Users/taylo/OneDrive/notes.org" "c:/Users/taylo/OneDrive/cs.org")))
+    (setq org-directory "c:/Users/taylo/OneDrive")
+    )
    (t
     (setq org-agenda-files (quote ("~/OneDrive/todo.org" "~/OneDrive/notes.org" "~/OneDrive/cs.org")))
     (setq org-directory "~/OneDrive")
@@ -51,7 +55,7 @@
 
 (use-package org-roam
   :config
-  (setq org-roam-directory "~/OneDrive/org-roam")
+  (setq org-roam-directory (concat org-directory "/" "org-roam"))
   (org-roam-db-autosync-mode)
   :bind
   (("C-c n f" . org-roam-node-find)
