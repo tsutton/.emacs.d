@@ -5,7 +5,7 @@
 ;;; Code:
 
 (use-package org
-  :straight nil
+  :ensure nil
   :defer t
   :config
   (add-hook 'org-mode-hook 'toggle-truncate-lines)
@@ -49,7 +49,7 @@
   )
 
 (use-package org-agenda
-  :straight nil
+  :ensure nil
   :bind ("C-c a" . org-agenda)
   )
 

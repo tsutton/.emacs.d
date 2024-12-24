@@ -4,3 +4,4 @@ straight/build
 straight/repos
 straight/build-cache.el
 *.elc
+/elpaca/

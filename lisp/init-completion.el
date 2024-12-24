@@ -206,6 +206,7 @@
 
 (use-package vertico
   :if (string= ts/completion-stack "vertico")
+  :ensure t
   :init
   (setq enable-recursive-minibuffers t)
 
@@ -218,6 +219,7 @@
 
 (use-package orderless
   :if (string= ts/completion-stack "vertico")
+  :ensure t
   :init
   (setq completion-styles '(orderless)
         completion-category-defaults nil
@@ -229,13 +231,16 @@
   :bind (:map minibuffer-local-map
          ("M-A" . marginalia-cycle))
 
-  :init
+  :config
   (marginalia-mode))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :ensure t
+  )
 
 (use-package all-the-icons-completion
   :after (marginalia all-the-icons)
+  :ensure t
   :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
   :init
   (all-the-icons-completion-mode))

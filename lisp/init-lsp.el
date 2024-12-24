@@ -9,6 +9,9 @@
   (add-hook 'before-save-hook 'lsp-format-buffer 0 t)
   )
 
+(use-package hydra
+  :ensure t)
+
 (use-package lsp-mode
   :defer t
   :ensure t
