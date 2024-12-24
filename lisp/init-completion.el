@@ -232,6 +232,14 @@
   :init
   (marginalia-mode))
 
+(use-package all-the-icons)
+
+(use-package all-the-icons-completion
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+
 ;; This block is copy-pasted from the consult README, with some bits commented out while I explore.
 (use-package consult
   :if (string= ts/completion-stack "vertico")
