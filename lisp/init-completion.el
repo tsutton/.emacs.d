@@ -331,8 +331,6 @@
   ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
 
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
-
   ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
@@ -351,7 +349,7 @@
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-   :preview-key (kbd "M-."))
+   :preview-key  "M-.")
 
   ;; From a consult read, if you know the narrowing key (e.g. 'f' for files and 'b' for buffers in
   ;; consult-buffer), you can just press it. But if you don't know the narrow keys, press THIS one and

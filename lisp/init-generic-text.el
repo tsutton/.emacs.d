@@ -28,6 +28,9 @@
   (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t)
   (setq undo-tree-visualizer-diff t)
+  (setq undo-tree-history-directory-alist
+	'(("." . "~/.emacs.d/etc/undo-tree-history"))
+	)
   )
 ;; browse-kill-ring makes it so that pressing M-y when the previous command
 ;; was NOT a yank pulls up the kill ring in a buffer for navigation
