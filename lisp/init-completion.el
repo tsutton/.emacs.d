@@ -228,8 +228,9 @@
         completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
+  :ensure t
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
 
   :config
   (marginalia-mode))
@@ -248,6 +249,7 @@
 ;; This block is copy-pasted from the consult README, with some bits commented out while I explore.
 (use-package consult
   :if (string= ts/completion-stack "vertico")
+  :ensure t
   :bind (;; C-c bindings (mode-specific-map)
          ;; ("C-c h" . consult-history)
          ;; ("C-c m" . consult-mode-command)
@@ -412,9 +414,11 @@
 ;; and projectile-switch-project, and it adds metadata to those for Marginalia and Embark to use.
 (use-package consult-projectile
   :after embark-consult
+  :ensure t
   :commands consult-projectile
   :config
 
+  ;; TODO this doesn't work?
   (embark-define-keymap embark-project-map
     "Keymap for actions on projectile projects."
     ("v" ts/vterm-in-project)
@@ -436,6 +440,7 @@
 
 (use-package consult-lsp
   :after (consult lsp)
+  :ensure t
   :commands (consult-lsp-symbols consult-lsp-file-symbols)
   :init
   ;; normally xref-find-apropos is bound to bound to <lsp-prefix> g a
@@ -447,6 +452,7 @@
 
 (use-package consult-flycheck
   :after (consult flycheck)
+  :ensure t
   :bind (:map flycheck-mode-map
 	      ;; maybe a bit weird to put this outside of flycheck's prefix C-c !
 	      ;; but C-c ! is a bit weird anyway.

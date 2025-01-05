@@ -54,6 +54,7 @@
   )
 
 (use-package org-roam
+  :ensure t
   :config
   (setq org-roam-directory (concat org-directory "/" "org-roam"))
   (org-roam-db-autosync-mode)
