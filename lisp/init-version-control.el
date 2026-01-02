@@ -9,6 +9,10 @@
 ;; See https://old.reddit.com/r/emacs/comments/po9cfj/magit_commands_broken/
 (use-package project)
 
+(use-package transient
+  :ensure t
+  )
+
 (use-package magit
   :defer t
   :ensure t

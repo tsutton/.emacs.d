@@ -22,7 +22,7 @@
   ;; https://rust-analyzer.github.io/manual.html
   ;; The default behavior of rust-analyzer is to awkwardly merge imports and merge-y as possible
   ;; Instead, do something sane - don't do any nested merges.
-  (setq lsp-rust-analyzer-import-merge-behaviour "last")
+  (setq lsp-rust-analyzer-import-granularity "module")
   ;; I think this gets clippy feedback into flycheck or something, I'm not exactly sure
   (setq lsp-rust-analyzer-cargo-watch-command "clippy")
 

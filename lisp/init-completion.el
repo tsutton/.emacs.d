@@ -286,7 +286,7 @@
          ;; ("M-g f" . consult-flycheck)
          ("M-g g" . consult-goto-line)             ;; orig. goto-line
          ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ;; ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading TODO
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading TODO
          ;; ("M-g m" . consult-mark)
          ;; ("M-g k" . consult-global-mark)
 
@@ -351,7 +351,7 @@
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-   :preview-key  "M-.")
+   :preview-key "M-.")
 
   ;; From a consult read, if you know the narrowing key (e.g. 'f' for files and 'b' for buffers in
   ;; consult-buffer), you can just press it. But if you don't know the narrow keys, press THIS one and

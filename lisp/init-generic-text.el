@@ -118,5 +118,12 @@
   (yas-global-mode)
   )
 
+;; TODO use rg (seems nicer than ripgrep - supports wgrep editting, the results buffer has more features, transient is nice)
+;; https://github.com/dajva/rg.el
+;; Annoying that rg asks for file type, though, wish that could be disabled
+
+(use-package rg
+  :ensure t)
+
 (provide 'init-generic-text)
 ;;; init-generic-text.el ends here

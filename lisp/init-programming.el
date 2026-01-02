@@ -14,7 +14,7 @@
   :ensure t
   :diminish
   :commands (global-company-mode)
-  :hook (after-init . global-company-mode)
+  :hook (prog-mode . company-mode) ; TODO maybe want this global but not on-type global?
   :bind (
 	 :map company-mode-map
 	      ("M-/" . company-complete)
@@ -71,6 +71,7 @@
 
 ;; ==from prelude==
 ;; make a shell script executable automatically on save
+;; TODO disable this in Rust files
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 

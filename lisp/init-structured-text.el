@@ -8,6 +8,11 @@
   :ensure t
   :mode "\\.yml\\'")
 
+(use-package yaml
+  :ensure t)
+(use-package yaml-pro
+  :ensure t)
+
 (use-package highlight-indent-guides
   :ensure t
   :hook (yaml-mode . highlight-indent-guides-mode)

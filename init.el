@@ -126,6 +126,7 @@
 (require 'init-go)
 (require 'init-scala)
 (require 'init-elisp)
+(require 'init-python)
 
 ;; jiq is a hacky little mode I made for using the jq command line tool, interactively
 ;; It is very much a WIP, but as is, it can be used for pulling data out of a JSON buffer
@@ -157,7 +158,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(warning-suppress-types '((elpaca core \30.2))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
